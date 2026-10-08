@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StructureX - Structural Health & Risk Predictor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: #0c0f14;
+      color: #e6edf3;
+      display: flex;
+      justify-content: center;
+      padding: 36px 16px 60px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 22px;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .field-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 13.5px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    /* Stepper Input */
+    .stepper-container {
+      display: flex;
+      align-items: center;
+      background-color: #1a1e28;
+      border: 1px solid #282f40;
+      border-radius: 8px;
+      padding: 7px 12px;
+      transition: border-color 0.2s;
+    }
+
+    .stepper-container:focus-within {
+      border-color: #4f5874;
+    }
+
+    .stepper-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .stepper-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stepper-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 18px;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .stepper-btn:hover {
+      color: #ffffff;
+    }
+
+    /* Slider Container */
+    .slider-wrapper {
+      position: relative;
+      margin-top: 22px;
+      margin-bottom: 4px;
+    }
+
+    .slider-bubble {
+      position: absolute;
+      top: -22px;
+      transform: translateX(-50%);
+      color: #ef4444;
+      font-size: 13px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: #334155;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ef4444;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider-scale {
+      display: flex;
+      justify-content: space-between;
+      color: #475569;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    /* Buttons Row */
+    .actions-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .btn-predict {
+      padding: 9px 18px;
+      background-color: transparent;
+      border: 1px solid #3b4252;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-predict:hover {
+      background-color: #1e2533;
+      border-color: #55607a;
+    }
+
+    .btn-secondary {
+      padding: 9px 14px;
+      background: #161b24;
+      border: 1px solid #2a3344;
+      border-radius: 6px;
+      color: #94a3b8;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      color: #fff;
+      border-color: #475569;
+    }
+
+    /* Results */
+    .results-area {
+      margin-top: 24px;
+    }
+
+    .risk-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .risk-alert {
+      background-color: #2b171c;
+      border: 1px solid #4a1d26;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #f87171;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .alert-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* Degradation Section */
+    .section-card {
+      background: #121620;
+      border: 1px solid #232a3a;
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 24px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 150px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-box {
+      width: 10px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    /* History Table */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .history-table th {
+      text-align: left;
+      padding: 8px;
+      color: #64748b;
+      border-bottom: 1px solid #232a3a;
+      font-weight: 500;
+    }
+
+    .history-table td {
+      padding: 8px;
+      border-bottom: 1px solid #1a202c;
+      color: #cbd5e1;
+    }
+
+    /* Print / PDF Mode */
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+      .actions-row, .slider-scale, .stepper-actions {
+        display: none !important;
+      }
+      .stepper-container, .section-card, .risk-alert {
+        border-color: #ccc;
+        background: #fafafa;
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="reportArea">
+    <h1>Enter Structural Parameters</h1>
+
+    <!-- Age of Structure -->
+    <div class="field-group">
+      <label>Age of Structure (years)</label>
+      <div class="stepper-container">
+        <input type="number" id="age" class="stepper-input" value="80" />
+        <div class="stepper-actions">
+          <button type="button" class="stepper-btn" onclick="stepVal('age', -1)">−</button>
+          <button type="button" class="stepper-btn" onclick="stepVal('age', 1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crack Width -->
+    <div class="field-group">
+      <label>Crack Width (mm)</label>
+      <div class="stepper-container">
+        <input type="number" id="crack" class="stepper-input" value="20.00" step="0.01" />
+        <div class="stepper-actions">
+          <button type="button" class="stepper-btn" onclick="stepVal('crack', -1, 2)">−</button>
+          <button type="button" class="stepper-btn" onclick="stepVal('crack', 1, 2)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vibration Level -->
+    <div class="field-group">
+      <label>Vibration Level (Hz)</label>
+      <div class="stepper-container">
+        <input type="number" id="vibration" class="stepper-input" value="70.00" step="0.01" />
+        <div class="stepper-actions">
+          <button type="button" class="stepper-btn" onclick="stepVal('vibration', -1, 2)">−</button>
+          <button type="button" class="stepper-btn" onclick="stepVal('vibration', 1, 2)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load Stress -->
+    <div class="field-group">
+      <label>Load Stress (%)</label>
+      <div class="stepper-container">
+        <input type="number" id="stress" class="stepper-input" value="120.00" step="0.01" />
+        <div class="stepper-actions">
+          <button type="button" class="stepper-btn" onclick="stepVal('stress', -1, 2)">−</button>
+          <button type="button" class="stepper-btn" onclick="stepVal('stress', 1, 2)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weather Impact -->
+    <div class="field-group">
+      <label>Weather Impact (1-10)</label>
+      <div class="slider-wrapper">
+        <div id="weatherBubble" class="slider-bubble">9</div>
+        <input type="range" id="weather" min="1" max="10" value="9" oninput="syncSlider('weather', 'weatherBubble')" />
+      </div>
+    </div>
+
+    <!-- Maintenance Score -->
+    <div class="field-group">
+      <label>Maintenance Score (1-10)</label>
+      <div class="slider-wrapper">
+        <div id="maintBubble" class="slider-bubble">2</div>
+        <input type="range" id="maintenance" min="1" max="10" value="2" oninput="syncSlider('maintenance', 'maintBubble')" />
+      </div>
+      <div class="slider-scale">
+        <span>1</span>
+        <span>10</span>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="actions-row">
+      <button class="btn-predict" onclick="calculateRisk()">Predict Risk</button>
+      <button class="btn-secondary" onclick="printReport()">Download Report (PDF)</button>
+    </div>
+
+    <!-- Results Display -->
+    <div class="results-area" id="resultsArea">
+      <div class="risk-title" id="riskProbText">Risk Probability: 92.00%</div>
+      <div class="risk-alert" id="riskCard">
+        <span class="alert-dot" id="alertDot"></span>
+        <span id="alertMsg">HIGH RISK of Structural Failure</span>
+      </div>
+    </div>
+
+    <!-- 10-Year Risk Degradation Projection -->
+    <div class="section-card">
+      <div class="section-title">10-Year Degradation Forecast</div>
+      <svg class="chart-container" viewBox="0 0 500 130" id="forecastChart">
+        <!-- SVG lines will be dynamically updated by calculateRisk() -->
+      </svg>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-box" style="background: #ef4444;"></div>
+          <span>Current Trajectory</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background: #22c55e;"></div>
+          <span>With Immediate Maintenance (Score 9)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspection Log / History -->
+    <div class="section-card">
+      <div class="section-title">Recent Inspection Log</div>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Stress</th>
+            <th>Crack</th>
+            <th>Risk</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    function stepVal(id, delta, decimals = 0) {
+      const input = document.getElementById(id);
+      let val = parseFloat(input.value) || 0;
+      val = Math.max(0, val + delta);
+      input.value = decimals > 0 ? val.toFixed(decimals) : Math.round(val);
+    }
+
+    function syncSlider(sliderId, bubbleId) {
+      const slider = document.getElementById(sliderId);
+      const bubble = document.getElementById(bubbleId);
+      bubble.textContent = slider.value;
+      const pct = (slider.value - slider.min) / (slider.max - slider.min);
+      bubble.style.left = `calc(${pct * 100}% + (${8 - pct * 16}px))`;
+    }
+
+    syncSlider('weather', 'weatherBubble');
+    syncSlider('maintenance', 'maintBubble');
+
+    let historyLog = [];
+
+    function calculateRisk() {
+      const age = parseFloat(document.getElementById('age').value) || 0;
+      const crack = parseFloat(document.getElementById('crack').value) || 0;
+      const vibration = parseFloat(document.getElementById('vibration').value) || 0;
+      const stress = parseFloat(document.getElementById('stress').value) || 0;
+      const weather = parseInt(document.getElementById('weather').value) || 1;
+      const maintenance = parseInt(document.getElementById('maintenance').value) || 1;
+
+      // Base Structural Risk Index formula
+      let score = (age * 0.18) + (crack * 1.35) + (vibration * 0.22) + (stress * 0.25) + (weather * 1.5) - (maintenance * 2.0);
+      let prob = Math.min(99.9, Math.max(1.0, score));
+
+      document.getElementById('riskProbText').innerText = `Risk Probability: ${prob.toFixed(2)}%`;
+
+      const card = document.getElementById('riskCard');
+      const dot = document.getElementById('alertDot');
+      const msg = document.getElementById('alertMsg');
+
+      let statusText = 'HIGH RISK of Structural Failure';
+
+      if (prob >= 75) {
+        card.style.backgroundColor = '#2b171c';
+        card.style.borderColor = '#4a1d26';
+        dot.style.backgroundColor = '#ef4444';
+        dot.style.boxShadow = '0 0 8px rgba(239, 68, 68, 0.8)';
+        msg.style.color = '#f87171';
+        msg.innerText = statusText;
+      } else if (prob >= 40) {
+        statusText = 'MODERATE RISK of Deterioration';
+        card.style.backgroundColor = '#2b2617';
+        card.style.borderColor = '#4a3d1d';
+        dot.style.backgroundColor = '#eab308';
+        dot.style.boxShadow = '0 0 8px rgba(234, 179, 8, 0.8)';
+        msg.style.color = '#fde047';
+        msg.innerText = statusText;
+      } else {
+        statusText = 'LOW RISK: Structural Integrity Stable';
+        card.style.backgroundColor = '#162b1d';
+        card.style.borderColor = '#1d4a2a';
+        dot.style.backgroundColor = '#22c55e';
+        dot.style.boxShadow = '0 0 8px rgba(34, 197, 94, 0.8)';
+        msg.style.color = '#86efac';
+        msg.innerText = statusText;
+      }
+
+      updateForecastChart(prob, maintenance);
+      logInspection(stress, crack, prob, statusText);
+    }
+
+    function updateForecastChart(currentProb, maintenance) {
+      const svg = document.getElementById('forecastChart');
+      const years = 10;
+      let pathCurrent = '';
+      let pathRepaired = '';
+
+      for (let i = 0; i <= years; i++) {
+        const x = 30 + (i * 44);
+        
+        // Deterioration projection without action
+        const degRate = (11 - maintenance) * 0.9;
+        const pCurrent = Math.min(100, currentProb + (i * degRate));
+        const yCurrent = 110 - (pCurrent * 0.95);
+
+        // Repaired projection with maintenance score = 9
+        const pRepaired = Math.max(12, currentProb * Math.pow(0.85, i));
+        const yRepaired = 110 - (pRepaired * 0.95);
+
+        pathCurrent += (i === 0 ? `M ${x} ${yCurrent}` : ` L ${x} ${yCurrent}`);
+        pathRepaired += (i === 0 ? `M ${x} ${yRepaired}` : ` L ${x} ${yRepaired}`);
+      }
+
+      svg.innerHTML = `
+        <line x1="30" y1="15" x2="30" y2="110" stroke="#232a3a" stroke-width="1"/>
+        <line x1="30" y1="110" x2="470" y2="110" stroke="#232a3a" stroke-width="1"/>
+        <text x="5" y="20" fill="#64748b" font-size="9">100%</text>
+        <text x="10" y="110" fill="#64748b" font-size="9">0%</text>
+        <text x="30" y="125" fill="#64748b" font-size="9">Now</text>
+        <text x="240" y="125" fill="#64748b" font-size="9">+5 Yrs</text>
+        <text x="450" y="125" fill="#64748b" font-size="9">+10 Yrs</text>
+        <path d="${pathCurrent}" fill="none" stroke="#ef4444" stroke-width="2.5" />
+        <path d="${pathRepaired}" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-dasharray="4" />
+      `;
+    }
+
+    function logInspection(stress, crack, prob, status) {
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      historyLog.unshift({ time: now, stress: stress + '%', crack: crack + 'mm', prob: prob.toFixed(1) + '%', status: status.split(' ')[0] });
+      if (historyLog.length > 4) historyLog.pop();
+
+      const tbody = document.getElementById('historyBody');
+      tbody.innerHTML = historyLog.map(row => `
+        <tr>
+          <td>${row.time}</td>
+          <td>${row.stress}</td>
+          <td>${row.crack}</td>
+          <td><strong>${row.prob}</strong></td>
+          <td style="color:${row.status === 'HIGH' ? '#f87171' : row.status === 'MODERATE' ? '#fde047' : '#4ade80'}">${row.status}</td>
+        </tr>
+      `).join('');
+    }
+
+    function printReport() {
+      window.print();
+    }
+
+    // Initial run
+    calculateRisk();
+  </script>
+</body>
+</html>
