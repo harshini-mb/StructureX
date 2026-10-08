@@ -19,48 +19,16 @@ StructureX is an intelligent diagnostic tool designed to evaluate structural int
 ```text
 StructureX/
 │
-├── index.html          # Complete standalone Web UI & visualizer
-├── train_model.py      # ML training script (Random Forest Classifier)
-├── app.py              # Flask REST API server
-├── requirements.txt    # Python dependencies
-├── .gitignore          # Git exclusion rules
-├── LICENSE             # MIT License
-└── README.md           # Documentation
-```
+├── index.html          
+├── train_model.py      
+├── app.py              
+├── requirements.txt    
+├── .gitignore          
+├── LICENSE             
+└── README.md           
 
----
 
-## ⚡ Quick Start
 
-### Option 1: Standalone (No installation needed)
-Just double-click `index.html` in any browser, or host it directly with **GitHub Pages**.
-
-### Option 2: Run with Flask & Machine Learning
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/StructureX.git
-   cd StructureX
-   ```
-
-2. Set up virtual environment and install packages:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-
-3. Train the model:
-   ```bash
-   python train_model.py
-   ```
-
-4. Launch the server:
-   ```bash
-   python app.py
-   ```
-5. Open `http://localhost:5000` in your web browser.
-
----
 
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE).
